@@ -28,7 +28,8 @@ class MainFragment : Fragment() {
 
     val mainComponentName = "ReproducerExample"
 
-    private lateinit var surface: ReactSurface
+    // Typed as the (nullable) ReactSurface interface, since this is the return type of createSurface
+    private var surface: ReactSurface? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,7 +56,7 @@ class MainFragment : Fragment() {
                 context = requireActivity(),
                 moduleName = mainComponentName,
                 cachedProps
-            ) as ReactSurface
+            )
             reactDelegate.setReactSurface(surface)
         }
 
@@ -76,6 +77,7 @@ class MainFragment : Fragment() {
 
         if (newArchEnabled) {
             // In the new architecture, updating the props is only available one the ReactSurfaceImpl, not the ReactSurface interface.
+            // Therefore we have to make an explicit downcast to the implementation class.
             (surface as? ReactSurfaceImpl)?.updateInitProps(updatedProperties)
         } else {
             // In the old architecture we could update the properties directly on the ReactRootView
